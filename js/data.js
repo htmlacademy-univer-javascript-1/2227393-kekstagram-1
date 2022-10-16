@@ -1,3 +1,5 @@
+import {getRandomNumber, getRandomFromArr, getId} from './util.js';
+
 const description = [
   'Лучшая фотография',
   'Ставим лайк, не проходим мимо',
@@ -17,4 +19,23 @@ const messages = [
 
 const names = ['Антон', 'Дарт Вейдер', 'Гарри Поттер', 'Илон Маск', 'Джеси Пинкман', 'Уолтер Уайт', 'Тимон', 'Пумба', 'Влад'];
 
-export {description, messages, names};
+const getRandomComment = () => ({
+  id: getId(),
+  avatar: `img/avatar-${getRandomNumber(1, 6)}.svg`,
+  message: getRandomFromArr(messages),
+  name: getRandomFromArr(names)
+});
+
+const getComments = (numberOfComments) => Array.from({length: numberOfComments}, () => getRandomComment());
+
+const getPost = () => ({
+  id: getId(),
+  url: `photos/${getId()}.jpg`,
+  description: getRandomFromArr(description),
+  likes: getRandomNumber(15, 200),
+  comments: getComments(getRandomNumber(1, 6))
+});
+
+const getPosts = (numberOfPosts) => Array.from({length: numberOfPosts}, () => getPost());
+
+export {getPosts};
