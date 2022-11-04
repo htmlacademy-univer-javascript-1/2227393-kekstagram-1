@@ -1,4 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'http://jspm.dev/uuid';
+
+let prictureCounter = 0;
 
 function getRandomNumber(from, to) {
   if (from < 0 || to < from) {
@@ -20,4 +22,9 @@ function getId() {
   return uuidv4();
 }
 
-export {getRandomNumber, validCommentLength, getRandomFromArr, getId};
+function getPictureId() {
+  prictureCounter++;
+  return prictureCounter;
+}
+
+export {getRandomNumber, validCommentLength, getRandomFromArr, getId, getPictureId};
