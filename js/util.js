@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'http://jspm.dev/uuid';
 
 function getRandomNumber(from, to) {
   if (from < 0 || to < from) {
