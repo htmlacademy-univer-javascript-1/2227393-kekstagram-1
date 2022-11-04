@@ -1,4 +1,4 @@
-import {getRandomNumber, getRandomFromArr, getId} from './util.js';
+import {getRandomNumber, getRandomFromArr, getId, getPictureId} from './util.js';
 
 const DESCRIPTIONS = [
   'Лучшая фотография',
@@ -30,7 +30,7 @@ const getComments = (numberOfComments) => Array.from({length: numberOfComments},
 
 const getPost = () => ({
   id: getId(),
-  url: `photos/${getId()}.jpg`,
+  url: `photos/${getPictureId()}.jpg`,
   description: getRandomFromArr(DESCRIPTIONS),
   likes: getRandomNumber(15, 200),
   comments: getComments(getRandomNumber(1, 6))
