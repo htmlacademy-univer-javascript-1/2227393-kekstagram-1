@@ -1,4 +1,5 @@
 import {getPosts} from './data.js';
+import {toBigPicture} from './big.js';
 
 const NUMBER_OF_PICTURES = 25;
 
@@ -13,6 +14,9 @@ generatedPictures.forEach((picture) => {
   el.querySelector('.picture__img').src = picture.url;
   el.querySelector('.picture__likes').textContent = picture.likes;
   el.querySelector('.picture__comments').textContent = picture.comments.length;
+  el.addEventListener('click', () => {
+    toBigPicture(picture);
+  });
   dFrag.appendChild(el);
 });
 
