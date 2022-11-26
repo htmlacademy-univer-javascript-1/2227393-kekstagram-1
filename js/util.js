@@ -1,17 +1,35 @@
 import { v4 as uuidv4 } from 'http://jspm.dev/uuid';
 
-let prictureCounter = 0;
+const MAX_HASHTAGS_COUNT = 5;
+const MAX_HASHTAG_LENGTH = 20;
+const MAX_COMMENT_LENGTH = 140;
+
+let pictureCounter = 0;
 
 function getRandomNumber(from, to) {
   if (from < 0 || to < from) {
-    throw new Error('Некоректные входные данный');
+    throw new Error('Некорректные входные данный');
   }
 
   return Math.floor(Math.random() * (to - from + 1) ) + from;
 }
 
-function validCommentLength(comment, maxLength) {
-  return comment.length <= maxLength;
+function validateComment(comment) {
+  return comment.length <= MAX_COMMENT_LENGTH;
+}
+
+function validateHashTags(s) {
+  if (s === '') { return true; }
+  s = s.toLowerCase().trim();
+  const regExp = new RegExp(`#[A-Za-z0-9]{1,${MAX_HASHTAG_LENGTH-1}}$`);
+  const hashtags = s.trim().split(new RegExp('[\\s\\t]+'));
+  const uniqueHashtags = new Set(hashtags);
+  for (const hashtag of hashtags) {
+    if (!regExp.test(hashtag)) {
+      return false;
+    }
+  }
+  return hashtags.length === uniqueHashtags.size && hashtags.length <= MAX_HASHTAGS_COUNT;
 }
 
 function getRandomFromArr(arr) {
@@ -23,8 +41,8 @@ function getId() {
 }
 
 function getPictureId() {
-  prictureCounter++;
-  return prictureCounter;
+  pictureCounter++;
+  return pictureCounter;
 }
 
-export {getRandomNumber, validCommentLength, getRandomFromArr, getId, getPictureId};
+export {getRandomNumber, validateComment, validateHashTags, getRandomFromArr, getId, getPictureId};
