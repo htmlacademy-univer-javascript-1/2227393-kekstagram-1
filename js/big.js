@@ -41,14 +41,14 @@ function addCloseButton(bigPicture) {
 }
 
 function addEscape(bigPicture) {
-  const enEscEvent = (event) => {
+  const onEscEvent = (event) => {
     if (event.key === 'Escape') {
       close(bigPicture, event);
-      document.removeEventListener('keydown', enEscEvent);
+      document.removeEventListener('keydown', onEscEvent);
     }
   };
 
-  document.addEventListener('keydown', enEscEvent);
+  document.addEventListener('keydown', onEscEvent);
 }
 
 function close(bigPicture) {
