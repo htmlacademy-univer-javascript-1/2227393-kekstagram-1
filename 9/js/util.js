@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'http://jspm.dev/uuid';
+import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
 
 const MAX_HASHTAGS_COUNT = 5;
 const MAX_HASHTAG_LENGTH = 20;
