@@ -33,7 +33,7 @@ const getPost = () => ({
   url: `photos/${getPictureId()}.jpg`,
   description: getRandomFromArr(DESCRIPTIONS),
   likes: getRandomNumber(15, 200),
-  comments: getComments(getRandomNumber(1, 6))
+  comments: getComments(getRandomNumber(1, 20))
 });
 
 const getPosts = (numberOfPosts) => Array.from({length: numberOfPosts}, getPost);
