@@ -201,7 +201,7 @@ uploader.addEventListener('change', () => {
 });
 
 function post(onSuccess, onFail, body) {
-  fetch('https://26.javascript.pages.academy/kekstagra', {method: 'POST', body},)
+  fetch('https://26.javascript.pages.academy/kekstagram', {method: 'POST', body},)
     .then((response) => {
       if (response.ok) {
         onSuccess();} else {
