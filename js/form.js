@@ -14,6 +14,10 @@ const effectsList = imgUploadOverlay.querySelector('.effects__list');
 const effectLevel = imgUploadOverlay.querySelector('.img-upload__effect-level');
 const effectLevelSlider = imgUploadOverlay.querySelector('.effect-level__slider');
 const effectLevelValue = imgUploadOverlay.querySelector('.effect-level__value');
+const ZOOM_STEP = 25;
+const ZOOM_MAX = 100;
+const ZOOM_MIN = 0;
+const ERROR_MSG = 'Форма не отправлена.';
 const EFFECT_PREVIEW_PREFIX = 'effects__preview--';
 const EFFECTS = {
   'effect-chrome': {
@@ -90,11 +94,6 @@ const onEscEvent = (e) => {
   }
 };
 
-imgUploadForm.addEventListener('submit', (e) => {
-  if (!pristine.validate()) {e.preventDefault();}
-  document.removeEventListener('keydown', onEscEvent);
-});
-
 function updSlider(min, max, step, start) {
   effectLevelSlider.noUiSlider.updateOptions({
     range: {
@@ -131,16 +130,55 @@ function setEffect() {
   }
 }
 
+const closeMessage = (message, showForm) => {
+  document.body.removeChild(message);
+  if (showForm) {
+    imgUploadOverlay.classList.remove('hidden');
+  }
+};
+
+function addCloseMessageEvents(message, showForm) {
+  const button = message.querySelector('button');
+  button.onclick = () => closeMessage(message, showForm);
+  message.onclick = (e) => {
+    if (e.target.className === 'error' || e.target.className === 'success') {
+      closeMessage(message, showForm);
+    }
+  };
+}
+
+function getSuccessMessage() {
+  const message = document.querySelector('#success').content.querySelector('section').cloneNode(true);
+  document.body.appendChild(message);
+  addCloseMessageEvents(message, false);
+}
+
+function getErrorMessage() {
+  const message = document.querySelector('#error').content.querySelector('section').cloneNode(true);
+  document.body.appendChild(message);
+  addCloseMessageEvents(message, true);
+}
+
+const postSuccess = () => {
+  closeForm();
+  getSuccessMessage();
+};
+
+const postFail = () => {
+  imgUploadOverlay.classList.add('hidden');
+  getErrorMessage();
+};
+
 function zoom(out) {
   let currentSize = parseInt(scaleControlValue.value.replace('%', ''), 10);
-  if (out === true && currentSize > 25) {
-    currentSize -= 25;
-  } else if (out === false && currentSize < 100) {
-    currentSize += 25;
+  if (out === true && currentSize > ZOOM_STEP) {
+    currentSize -= ZOOM_STEP;
+  } else if (out === false && currentSize < ZOOM_MAX) {
+    currentSize += ZOOM_STEP;
   }
 
   scaleControlValue.value = `${currentSize}%`;
-  imgUploadPreview.style.transform = `scale(${currentSize / 100})`;
+  imgUploadPreview.style.transform = `scale(${currentSize / ZOOM_MAX})`;
 }
 
 uploader.addEventListener('change', () => {
@@ -152,7 +190,7 @@ uploader.addEventListener('change', () => {
   scaleControlSmaller.addEventListener('click', () => zoom(true));
   scaleControlBigger.addEventListener('click', () => zoom(false));
   effectsList.addEventListener('change', setPictureEffect);
-  noUiSlider.create(effectLevelSlider, {range: {min: 0, max: 100,}, start: 100});
+  noUiSlider.create(effectLevelSlider, {range: {min: ZOOM_MIN, max: ZOOM_MAX,}, start: ZOOM_MAX});
   effectLevelSlider.noUiSlider.on('update', () => {setEffect();});
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onEscEvent);
@@ -160,4 +198,25 @@ uploader.addEventListener('change', () => {
     document.removeEventListener('keydown', onEscEvent);
     closeForm();
   }, {once: true});
+});
+
+function post(onSuccess, onFail, body) {
+  fetch('https://26.javascript.pages.academy/kekstagram', {method: 'POST', body},)
+    .then((response) => {
+      if (response.ok) {
+        onSuccess();} else {
+        onFail(ERROR_MSG);
+      }
+    })
+    .catch(() => {
+      onFail(ERROR_MSG);
+    });
+}
+
+
+imgUploadForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (!pristine.validate) {return;}
+  document.removeEventListener('keydown', onEscEvent);
+  post(postSuccess, postFail, new FormData(e.target));
 });
