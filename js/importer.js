@@ -1,11 +1,17 @@
 import {toBigPicture} from './big.js';
+import {debounce, getRandomElementsFromArr} from './util.js';
 
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const picturesContainerTemplate = document.querySelector('.pictures');
+const imgFiltersForm = document.querySelector('.img-filters__form');
 const dFrag = document.createDocumentFragment();
+const RANDOM_PICTURES_SIZE = 10;
 
-function renderData(data) {
-  data.forEach((d) => {
+let importedData = [];
+
+function renderData() {
+  picturesContainerTemplate.querySelectorAll('.picture').forEach((picture) => picturesContainerTemplate.removeChild(picture));
+  importedData.forEach((d) => {
     const clone = pictureTemplate.cloneNode(true);
     clone.querySelector('.picture__img').src = d.url;
     clone.querySelector('.picture__likes').textContent = d.likes;
@@ -27,10 +33,39 @@ function generateError() {
   document.querySelector('body').append(error);
 }
 
+function clearImgFiltersForm() {
+  const childNodes = imgFiltersForm.childNodes;
+  childNodes.forEach((e) => {
+    if (e.nodeType !== 3) {
+      e.classList.remove('img-filters__button--active');
+    }
+  });
+}
+
+function generateData(data) {
+  importedData = data;
+  renderData();
+  document.querySelector('.img-filters').classList.remove('img-filters--inactive');
+  imgFiltersForm.addEventListener('click', (e) => {
+    importedData = [...data];
+    clearImgFiltersForm();
+    e.target.classList.add('img-filters__button--active');
+    switch (e.target.id) {
+      case 'filter-random':
+        importedData = getRandomElementsFromArr(importedData, RANDOM_PICTURES_SIZE);
+        break;
+      case 'filter-discussed':
+        importedData.sort((p1, p2) => p2.comments.length - p1.comments.length);
+        break;
+    }
+    debounce(() => renderData(), 500)();
+  });
+}
+
 function importData(importUrl) {
   fetch(importUrl)
     .then((response) => response.json())
-    .then((data) => {renderData(data);})
+    .then((data) => {generateData(data);})
     .catch((e) => {generateError(e);});
 }
 
