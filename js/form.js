@@ -181,9 +181,13 @@ function zoom(out) {
   imgUploadPreview.style.transform = `scale(${currentSize / ZOOM_MAX})`;
 }
 
-uploader.addEventListener('change', () => {
+function checkPhoto() {
   if (!uploader.files[0].type.startsWith('image/')) {return;}
   imgUploadPreview.src = URL.createObjectURL(uploader.files[0]);
+}
+
+uploader.addEventListener('change', () => {
+  checkPhoto();
   imgUploadOverlay.classList.remove('hidden');
   effectLevel.classList.add('hidden');
   scaleControlValue.value = '100%';
